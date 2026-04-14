@@ -55,12 +55,14 @@ const CSS = `
   .card-desc em { color:#7dd3fc;font-style:normal }
   .card-tags { display:flex;flex-wrap:wrap;gap:7px }
   .pr-tag { font-size:10.5px;padding:4px 11px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);color:#64748b }
-  .card-links { display:flex;gap:12px;margin-top:4px }
+  .card-links { display:flex;gap:12px;margin-top:4px;flex-wrap:wrap }
   .link-btn { display:flex;align-items:center;gap:6px;font-size:12px;padding:7px 16px;border-radius:8px;text-decoration:none;transition:all .2s;font-family:'JetBrains Mono',monospace }
   .link-live { background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);color:#60a5fa }
   .link-live:hover { background:rgba(96,165,250,.18);border-color:rgba(96,165,250,.5) }
   .link-code { background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#64748b }
   .link-code:hover { border-color:rgba(255,255,255,.2);color:#94a3b8 }
+  .link-code2 { background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bfa }
+  .link-code2:hover { background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4) }
   .card-bar { height:2px;border-radius:2px;margin-top:4px;background:linear-gradient(90deg,transparent,rgba(96,165,250,.15),transparent) }
 `;
 
@@ -71,14 +73,15 @@ const PROJECTS = [
     title: "Blood Donation Website",
     desc: (
       <>
-        A full-stack website  that connects <em>blood donors with patients</em>{" "}
+        A full-stack website that connects <em>blood donors with patients</em>{" "}
         in emergencies. Built with real-time search, donor registration,
         and request handling — because this kind of tool actually matters.
       </>
     ),
     tags: ["React", "Tailwind", "JavaScript", "API"],
-    live: "#",
-    code: "#",
+    live: "https://69d384e05db19dafabaf3bc0--fabulous-shortbread-7d982b.netlify.app/",
+    code: "https://github.com/Nirmal22-12/micro-project.git",
+    code2: null,
   },
   {
     num: "PROJECT_02",
@@ -91,29 +94,17 @@ const PROJECTS = [
         aesthetic that feels intentional — not templated.
       </>
     ),
-    tags: ["React", "Tailwind", "Framer Motion"],
-    live: "#",
-    code: "#",
+    tags: ["React", "Tailwind", "Framer Motion", "Node.js", "MongoDB"],
+    live: "https://my-projects-frontend-two.vercel.app",
+    code: "https://github.com/Prabalbytes/my_projects_frontend-",
+    code2: "https://github.com/Prabalbytes/my_projects",
   },
 ];
 
-// ── Framer Motion variants ────────────────────────────────────
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0 },
-};
+const fadeUp  = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.15 } } };
+const cardVar = { hidden: { opacity: 0, y: 36 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } };
 
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.15 } },
-};
-
-const cardVar = {
-  hidden: { opacity: 0, y: 36 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-};
-
-// ── Main component ────────────────────────────────────────────
 function Projects() {
   const sectionRef = useRef(null);
   const svgRef     = useRef(null);
@@ -139,7 +130,6 @@ function Projects() {
       const ns = "http://www.w3.org/2000/svg";
       const d  = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
 
-      // Dashed path
       const path = document.createElementNS(ns, "path");
       path.setAttribute("d", d);
       path.setAttribute("fill", "none");
@@ -149,7 +139,6 @@ function Projects() {
       path.setAttribute("stroke-linecap", "round");
       svg.appendChild(path);
 
-      // Node dots
       pts.forEach((p) => {
         const c = document.createElementNS(ns, "circle");
         c.setAttribute("cx", p.x); c.setAttribute("cy", p.y);
@@ -160,7 +149,6 @@ function Projects() {
       const total = path.getTotalLength();
       const speed = total / 360;
 
-      // Pulse ring
       const ring = document.createElementNS(ns, "circle");
       ring.setAttribute("r", "10");
       ring.setAttribute("fill", "rgba(96,165,250,0.08)");
@@ -168,7 +156,6 @@ function Projects() {
       ring.setAttribute("stroke-width", "1");
       svg.appendChild(ring);
 
-      // Traveling dot
       const dot = document.createElementNS(ns, "circle");
       dot.setAttribute("r", "4"); dot.setAttribute("fill", "#60a5fa");
       dot.style.filter = "drop-shadow(0 0 6px #60a5fa) drop-shadow(0 0 12px #a78bfa)";
@@ -201,60 +188,32 @@ function Projects() {
 
         <div className="pr-inner">
 
-          {/* ── Header ── */}
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <motion.div className="pr-lbl" variants={fadeUp}>
-              // projects.showcase
-            </motion.div>
-            <motion.h2 className="pr-h2" variants={fadeUp}>
-              Featured <span className="pr-grad">Projects</span>
-            </motion.h2>
+          <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }}>
+            <motion.div className="pr-lbl" variants={fadeUp}>// projects.showcase</motion.div>
+            <motion.h2 className="pr-h2" variants={fadeUp}>Featured <span className="pr-grad">Projects</span></motion.h2>
             <motion.div className="pr-divider" variants={fadeUp} />
           </motion.div>
 
-          {/* ── Cards ── */}
-          <motion.div
-            className="pr-grid"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-          >
-            {PROJECTS.map((p, i) => (
-              <motion.div
-                key={p.num}
-                variants={cardVar}
-                ref={addCard}
-                className="card-wrap"
-                whileHover={{ y: -4, transition: { duration: 0.25 } }}
-              >
+          <motion.div className="pr-grid" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }}>
+            {PROJECTS.map((p) => (
+              <motion.div key={p.num} variants={cardVar} ref={addCard} className="card-wrap" whileHover={{ y: -4, transition: { duration: 0.25 } }}>
                 <div className="card-inner">
-
                   <div className="card-top">
                     <span className="card-num">{p.num}</span>
                     <span className="card-status">● {p.status}</span>
                   </div>
-
                   <div className="card-title">{p.title}</div>
-
                   <p className="card-desc">{p.desc}</p>
-
                   <div className="card-tags">
-                    {p.tags.map((t) => (
-                      <span className="pr-tag" key={t}>{t}</span>
-                    ))}
+                    {p.tags.map((t) => <span className="pr-tag" key={t}>{t}</span>)}
                   </div>
-
                   <div className="card-links">
-                    <a href={p.live} className="link-btn link-live">↗ Live</a>
-                    <a href={p.code} className="link-btn link-code">⌥ Code</a>
+                    <a href={p.live} target="_blank" rel="noopener noreferrer" className="link-btn link-live">↗ Live</a>
+                    <a href={p.code} target="_blank" rel="noopener noreferrer" className="link-btn link-code">⌥ Frontend</a>
+                    {p.code2 && (
+                      <a href={p.code2} target="_blank" rel="noopener noreferrer" className="link-btn link-code2">⌥ Backend</a>
+                    )}
                   </div>
-
                   <div className="card-bar" />
                 </div>
               </motion.div>
